@@ -3,6 +3,7 @@
     {
       "id": "mqttIn",
       "type": "MqttInNode",
+      "broker": "777155e1e7687505",
       "wire": [["split"]]
     },
     {
@@ -24,6 +25,7 @@
     {
       "id": "mqttOut",
       "type": "MqttOutNode",
+      "broker": "c94037b4662b2b1d",
       "wire": []
     },
     {
@@ -35,6 +37,26 @@
       "id": "PlaceDebug",
       "type": "DebugNode",
       "wire": []
+    },
+    {
+      "id": "777155e1e7687505",
+      "type": "Broker",
+      "name": "NHN academy EMS",
+      "broker": "ems.nhnacademy.com",
+      "port": "1883",
+      "autoConnect": true,
+      "keepalive": "60",
+      "cleansession": true
+    },
+    {
+      "id": "c94037b4662b2b1d",
+      "type": "Broker",
+      "name": "my",
+      "broker": "localhost",
+      "port": "1883",
+      "autoConnect": true,
+      "keepalive": "60",
+      "cleansession": true
     }
   ],
   [
