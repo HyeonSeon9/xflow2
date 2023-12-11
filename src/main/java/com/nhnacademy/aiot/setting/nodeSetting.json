@@ -1,0 +1,46 @@
+[
+  [
+    {
+      "id": "mqttIn",
+      "type": "MqttInNode",
+      "wire": [["split"]]
+    },
+    {
+      "id": "split",
+      "type": "SplitNode",
+      "wire": [["placeTrans"], ["SplitDebug"]]
+    },
+    {
+      "id": "placeTrans",
+      "type": "PlaceTranslatorNode",
+      "wire": [["reduceTopic"], ["PlaceDebug"]]
+    },
+
+    {
+      "id": "reduceTopic",
+      "type": "ReduceTopicNode",
+      "wire": [["mqttOut"]]
+    },
+    {
+      "id": "mqttOut",
+      "type": "MqttOutNode",
+      "wire": []
+    },
+    {
+      "id": "SplitDebug",
+      "type": "DebugNode",
+      "wire": []
+    },
+    {
+      "id": "PlaceDebug",
+      "type": "DebugNode",
+      "wire": []
+    }
+  ],
+  [
+    {
+      "--an": "application/+/device/+/event/up",
+      "-s": "temperature,humidity"
+    }
+  ]
+]

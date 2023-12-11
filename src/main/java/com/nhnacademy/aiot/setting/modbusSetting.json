@@ -1,0 +1,56 @@
+[
+  [
+    {
+      "id": "inject",
+      "type": "InjectNode",
+      "wire": [["modbusServer"]]
+    },
+    {
+      "id": "modbusRead",
+      "type": "ModbusReadNode",
+      "unitid": "",
+      "dataType": "HoldingRegister",
+      "adr": "0",
+      "quantity": "5",
+      "server": "modbusClient",
+      "wire": [["ReadDebug"], []]
+    },
+    {
+      "id": "modbusServer",
+      "type": "ModbusServerNode",
+      "hostname": "0.0.0.0",
+      "serverPort": "11502",
+      "holdingBufferSize": 10000,
+      "inputBufferSize": 10000,
+      "wire": [[], [], [], [], []]
+    },
+    {
+      "id": "modbusWrite",
+      "type": "ModbusWriteNode",
+      "dataType": "HoldingRegister",
+      "quantity": "1",
+      "adr": "1",
+      "server": "modbusClient",
+      "wire": [["WriteDebug"], []]
+    },
+    {
+      "id": "WriteDebug",
+      "type": "DebugNode",
+      "wire": []
+    },
+    {
+      "id": "ReadDebug",
+      "type": "DebugNode",
+      "wire": []
+    },
+    {
+      "id": "modbusClient",
+      "type": "Client",
+      "clienttype": "tcp",
+      "name": "localhost",
+      "tcpHost": "0.0.0.0",
+      "tcpPort": "11502",
+      "unit_id": "1"
+    }
+  ]
+]
