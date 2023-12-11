@@ -1,5 +1,7 @@
 package com.nhnacademy.aiot.gateway;
 
+import com.nhnacademy.aiot.setting.BeforeSetting;
+
 public class SimpleNodeRed {
 
     public static void main(String[] args) {

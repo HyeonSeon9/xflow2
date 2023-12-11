@@ -1,4 +1,4 @@
-package com.nhnacademy.aiot.gateway;
+package com.nhnacademy.aiot.setting;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

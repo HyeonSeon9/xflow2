@@ -1,4 +1,4 @@
-package com.nhnacademy.aiot.gateway;
+package com.nhnacademy.aiot.setting;
 
 import java.io.FileReader;
 import java.io.IOException;

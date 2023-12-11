@@ -52,6 +52,11 @@ public class SplitNode extends InputOutputNode {
                             .getJSONObject(DEVICE_INFO).get(TENANT_NAME));
                     newJson.put("deviceEui", jsonObject.getJSONObject(PAYLOAD)
                             .getJSONObject(DEVICE_INFO).getString("devEui"));
+                    newJson.put("site", jsonObject.getJSONObject(PAYLOAD).getJSONObject(DEVICE_INFO)
+                            .getJSONObject("tags").get("site"));
+                    newJson.put("branch", jsonObject.getJSONObject(PAYLOAD)
+                            .getJSONObject(DEVICE_INFO).getJSONObject("tags").get("branch"));
+
                     newJson.put("prev", "Split");
                     sendNode(newJson);
                 }
