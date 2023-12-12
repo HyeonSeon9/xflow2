@@ -1,7 +1,8 @@
 package com.nhnacademy.aiot.node;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import java.util.List;
+import java.util.stream.Stream;
+import org.json.JSONObject;
 import com.nhnacademy.aiot.database.ReadPostgres;
 import com.nhnacademy.aiot.message.JsonMessage;
 import com.nhnacademy.aiot.message.Message;
@@ -10,14 +11,15 @@ import redis.clients.jedis.Jedis;
 
 public class RuleEngineNode extends InputOutputNode {
 
-    JSONArray jsonArray;
+    List<JSONObject> jsonArray;
     Jedis jedis;
+    Stream<JSONObject> stream;
 
     public RuleEngineNode(String name, int count) {
         super(name, 1, count);
     }
 
-    public void setJsonArray(JSONArray jsonArray) {
+    public void setJsonArray(List<JSONObject> jsonArray) {
         this.jsonArray = jsonArray;
     }
 
@@ -27,6 +29,7 @@ public class RuleEngineNode extends InputOutputNode {
         redisServer.connect();
         this.jedis = redisServer.getJedis();
         setJsonArray(ReadPostgres.getJsonArray());
+
     }
 
 
@@ -35,20 +38,21 @@ public class RuleEngineNode extends InputOutputNode {
         for (int i = 0; i < getInputWireCount(); i++) {
             while (getInputWire(i).hasMessage()) {
                 Message message = getInputWire(0).get();
-                org.json.JSONObject jsonObject =
-                        new org.json.JSONObject(((JsonMessage) message).getPayload().toString());
+                JSONObject jsonObject =
+                        new JSONObject(((JsonMessage) message).getPayload().toString());
 
                 String type = (String) jsonObject.get("sensor");
                 String deviceEui = (String) jsonObject.get("deviceEui");
-                Object obj = jsonArray.stream()
-                        .filter(x -> ((JSONObject) x).get("type").equals(type)
-                                && ((JSONObject) x).get("deviceeui").equals(deviceEui))
+
+                JSONObject obj = jsonArray.stream()
+                        .filter(x -> x.getString("type").equals(type)
+                                && x.getString("deviceeui").equals(deviceEui))
                         .map(JSONObject.class::cast).findFirst().orElse(null);
-                int id = Integer.parseInt((String) ((JSONObject) obj).get("id"));
-                jedis.hset("sensorInfo", String.valueOf(id), String
-                        .valueOf(((org.json.JSONObject) (jsonObject.get("payload"))).get("value")));
+                int id = Integer.parseInt(obj.getString("id"));
+                jedis.hset("sensorInfo", String.valueOf(id),
+                        String.valueOf(((JSONObject) (jsonObject.get("payload"))).get("value")));
                 System.out.println(id + ">>>" + jsonObject.get("place") + " > " + type + " : "
-                        + ((org.json.JSONObject) (jsonObject.get("payload"))).get("value"));
+                        + ((JSONObject) (jsonObject.get("payload"))).get("value"));
                 output(0, new JsonMessage(jsonObject));
             }
         }
