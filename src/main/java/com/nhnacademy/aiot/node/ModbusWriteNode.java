@@ -3,7 +3,9 @@ package com.nhnacademy.aiot.node;
 import com.nhnacademy.aiot.message.ByteMessage;
 import com.nhnacademy.aiot.modbus.client.Client;
 import com.nhnacademy.aiot.modbus.server.SimpleMB;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ModbusWriteNode extends InputOutputNode {
     private String dataType;
     private int quantity;
