@@ -38,6 +38,8 @@ public class BeforeSetting {
     // protected static String settingPath =
     // "src/main/java/com/nhnacademy/aiot/setting/modbusSetting.json";
 
+    // protected static String settingPath = "src/main/java/com/nhnacademy/aiot/setting/test.json";
+
     private Map<String, ActiveNode> nodeList;
     private Map<String, Map<Integer, List<String>>> wireMap;
     private Map<String, Client> clientMap;

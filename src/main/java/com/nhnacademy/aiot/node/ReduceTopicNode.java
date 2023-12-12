@@ -40,7 +40,7 @@ public class ReduceTopicNode extends InputOutputNode {
 
             jsonObject.put("prev", "Reduce");
             log.info("패킷전송");
-            output(new JsonMessage(new JSONObject(jsonObject.toString())));
+            output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
         }
     }
 

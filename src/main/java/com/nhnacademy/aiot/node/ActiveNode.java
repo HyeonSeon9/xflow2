@@ -75,6 +75,7 @@ public abstract class ActiveNode extends Node implements Runnable {
                 } catch (Exception e) {
                     stop();
                     e.printStackTrace();
+                    System.exit(0);
                 }
             }
 

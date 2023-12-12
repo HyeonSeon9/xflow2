@@ -22,20 +22,22 @@ public class DebugNode extends OutputNode {
 
     @Override
     void process() {
-
-        while (getInputWire(0).hasMessage()) {
-            Message message = getInputWire(0).get();
-            if (message instanceof JsonMessage) {
-                JSONObject jsonObject = ((JsonMessage) message).getPayload();
-                log.info("{}", jsonObject);
-            } else {
-                byte[] byteObject = ((ByteMessage) message).getPayload();
-                if (byteObject[7] == 3) {
-                    log.info("{}", Arrays.toString(SimpleMB.addByte(byteObject)));
+        for (int i = 0; i < getInputWireCount(); i++) {
+            while (getInputWire(i).hasMessage()) {
+                Message message = getInputWire(i).get();
+                if (message instanceof JsonMessage) {
+                    JSONObject jsonObject = ((JsonMessage) message).getPayload();
+                    log.info("{}", jsonObject);
                 } else {
-                    log.info("{}", Arrays.toString(byteObject));
+                    byte[] byteObject = ((ByteMessage) message).getPayload();
+                    if (byteObject[7] == 3) {
+                        log.info("{}", Arrays.toString(SimpleMB.addByte(byteObject)));
+                    } else {
+                        log.info("{}", Arrays.toString(byteObject));
+                    }
                 }
             }
         }
+
     }
 }

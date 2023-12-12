@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class ReadPostgres {
     public static void main(String[] args) throws SQLException {
@@ -13,17 +15,21 @@ public class ReadPostgres {
         String user = "postgres";
         String password = "root";
         String sql = "select * from sensorinfo";
-
+        JSONArray jsonArray = new JSONArray();
         try (Connection connect = DriverManager.getConnection(url, user, password);
                 Statement stmt = connect.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             if (!connect.isClosed()) {
                 while (rs.next()) {
+                    JSONObject json = new JSONObject();
                     ResultSetMetaData metaData = rs.getMetaData();
-                    for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                        System.out.print(rs.getObject(i) + " | ");
+                    json.put("id", rs.getString("id"));
+                    JSONObject payload = new JSONObject();
+                    for (int i = 2; i <= metaData.getColumnCount(); i++) {
+                        json.put(metaData.getColumnName(i), rs.getObject(i));
                     }
+                    jsonArray.add(json);
                     System.out.println("\n");
                 }
 
@@ -35,6 +41,6 @@ public class ReadPostgres {
             System.err.println(e.getMessage());
 
         }
-
+        System.out.println(jsonArray);
     }
 }
