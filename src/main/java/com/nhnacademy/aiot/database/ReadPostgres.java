@@ -10,7 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class ReadPostgres {
-    public static void main(String[] args) throws SQLException {
+
+    public static JSONArray getJsonArray() {
         String url = "jdbc:postgresql://localhost:5432/xflow";
         String user = "postgres";
         String password = "root";
@@ -30,7 +31,6 @@ public class ReadPostgres {
                         json.put(metaData.getColumnName(i), rs.getObject(i));
                     }
                     jsonArray.add(json);
-                    System.out.println("\n");
                 }
 
             } else {
@@ -41,6 +41,7 @@ public class ReadPostgres {
             System.err.println(e.getMessage());
 
         }
-        System.out.println(jsonArray);
+
+        return jsonArray;
     }
 }
