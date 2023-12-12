@@ -11,6 +11,6 @@ public class InjectNode extends InputNode {
     @Override
     void process() {
         byte[] bufferOut = new byte[] {0, 1, 0, 0, 0, 6, 1, 3, 0, 0, 0, 5};
-        output(new ByteMessage(bufferOut));
+        output(0, new ByteMessage(bufferOut));
     }
 }

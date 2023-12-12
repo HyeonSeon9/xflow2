@@ -14,13 +14,13 @@
     {
       "id": "placeTrans",
       "type": "PlaceTranslatorNode",
-      "wire": [["reduceTopic"], ["PlaceDebug"], ["postgres"]]
+      "wire": [["reduceTopic", "PlaceDebug", "postgres"]]
     },
 
     {
       "id": "reduceTopic",
       "type": "ReduceTopicNode",
-      "wire": [["mqttOut"], []]
+      "wire": [["mqttOut"]]
     },
     {
       "id": "postgres",

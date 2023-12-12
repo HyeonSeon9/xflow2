@@ -19,7 +19,9 @@ public class PostgresTest {
                 "  branch varchar(15) not null,\n" + //
                 "  place varchar(15) not null ,\n" + //
                 "  unitId int not null,\n" + //
-                "  Address int not null unique\n" + //
+                "  Address int not null unique,\n" + //
+                "  virtualId int not null,\n" + //
+                "  virtualAddress int not null\n" + //
                 ");";
 
         try (Connection connect = DriverManager.getConnection(url, user, password);
