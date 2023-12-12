@@ -5,39 +5,46 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "java",
-      "name": "SimpleNodeRed",
-      "request": "launch",
-      "mainClass": "com.nhnacademy.aiot.gateway.SimpleNodeRed",
-      "projectName": "mini-project-aiot-gateway1",
-      "args": [
-        "-c",
-        "--an",
-        "application/+/device/+/event/up",
-        "-s",
-        "temperature,humidity,co2,leq"
-      ]
+        "type": "java",
+        "name": "PostgresTest",
+        "request": "launch",
+        "mainClass": "com.nhnacademy.aiot.database.PostgresTest",
+        "projectName": "mini-project-aiot-gateway1"
     },
     {
-      "type": "java",
-      "name": "Client",
-      "request": "launch",
-      "mainClass": "com.nhnacademy.aiot.modbus.client.Client",
-      "projectName": "mini-project-aiot-gateway1"
+        "type": "java",
+        "name": "SimpleNodeRed",
+        "request": "launch",
+        "mainClass": "com.nhnacademy.aiot.gateway.SimpleNodeRed",
+        "projectName": "mini-project-aiot-gateway1",
+        "args": [
+            "-c",
+            "--an",
+            "application/+/device/+/event/up",
+            "-s",
+            "temperature,humidity"
+        ]
     },
     {
-      "type": "java",
-      "name": "ModbusServer",
-      "request": "launch",
-      "mainClass": "com.nhnacademy.aiot.modbus.server.ModbusServer",
-      "projectName": "mini-project-aiot-gateway1"
+        "type": "java",
+        "name": "Client",
+        "request": "launch",
+        "mainClass": "com.nhnacademy.aiot.modbus.client.Client",
+        "projectName": "mini-project-aiot-gateway1"
     },
     {
-      "type": "java",
-      "name": "test",
-      "request": "launch",
-      "mainClass": "com.nhnacademy.aiot.modbus.server.test",
-      "projectName": "mini-project-aiot-gateway1"
+        "type": "java",
+        "name": "ModbusServer",
+        "request": "launch",
+        "mainClass": "com.nhnacademy.aiot.modbus.server.ModbusServer",
+        "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+        "type": "java",
+        "name": "test",
+        "request": "launch",
+        "mainClass": "com.nhnacademy.aiot.modbus.server.test",
+        "projectName": "mini-project-aiot-gateway1"
     }
-  ]
+]
 }
