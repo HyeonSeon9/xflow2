@@ -101,9 +101,16 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
+<<<<<<< HEAD
             <version>2.9.0</version>
         </dependency>
 
+=======
+            <version>5.1.0</version>
+        </dependency>
+
+
+>>>>>>> origin/feature/AIGY01-019
     </dependencies>
 
     <build>

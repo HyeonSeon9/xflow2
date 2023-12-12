@@ -3,6 +3,7 @@
     {
       "id": "mqttIn",
       "type": "MqttInNode",
+      "broker": "777155e1e7687505",
       "wire": [["split"]]
     },
     {
@@ -13,17 +14,23 @@
     {
       "id": "placeTrans",
       "type": "PlaceTranslatorNode",
-      "wire": [["reduceTopic"], ["PlaceDebug"]]
+      "wire": [["reduceTopic"], ["PlaceDebug"], ["postgres"]]
     },
 
     {
       "id": "reduceTopic",
       "type": "ReduceTopicNode",
-      "wire": [["mqttOut"], ["PostgresOut"]]
+      "wire": [["mqttOut"], []]
+    },
+    {
+      "id": "postgres",
+      "type": "PostgresOutNode",
+      "wire": []
     },
     {
       "id": "mqttOut",
       "type": "MqttOutNode",
+      "broker": "c94037b4662b2b1d",
       "wire": []
     },
     {
@@ -37,9 +44,24 @@
       "wire": []
     },
     {
-      "id": "PostgresOut",
-      "type" : "PostgresOutNode",
-      "wire" : []
+      "id": "777155e1e7687505",
+      "type": "Broker",
+      "name": "NHN academy EMS",
+      "broker": "ems.nhnacademy.com",
+      "port": "1883",
+      "autoConnect": true,
+      "keepalive": "60",
+      "cleansession": true
+    },
+    {
+      "id": "c94037b4662b2b1d",
+      "type": "Broker",
+      "name": "my",
+      "broker": "localhost",
+      "port": "1883",
+      "autoConnect": true,
+      "keepalive": "60",
+      "cleansession": true
     }
   ],
   [

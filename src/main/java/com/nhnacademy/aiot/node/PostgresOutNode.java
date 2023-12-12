@@ -9,8 +9,6 @@ import java.sql.Statement;
 import org.json.JSONObject;
 import com.nhnacademy.aiot.message.JsonMessage;
 import com.nhnacademy.aiot.message.Message;
-import lombok.extern.slf4j.Slf4j;
-@Slf4j
 public class PostgresOutNode extends OutputNode {
     private Connection connect;
     private Statement stmt;
@@ -31,15 +29,10 @@ public class PostgresOutNode extends OutputNode {
     }
 
     void setup() throws SQLException {
-
         this.connect = DriverManager.getConnection(url, user, password);
         this.stmt = connect.createStatement();
     }
-    @Override
-    void preprocess() {
-        log.info("Node Start");
-        
-    }
+
     @Override
     void process() {
         if (((getInputWire(0) != null) && (getInputWire(0).hasMessage()))) {
@@ -56,8 +49,7 @@ public class PostgresOutNode extends OutputNode {
                     "SELECT * FROM sensorinfo WHERE type = '%s' AND deviceeui = '%s';", type,
                     deviceEui);
 
-
-                    System.out.println("+++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("here");
             try {
                 this.rs = stmt.executeQuery(search);
                 if (!rs.next()) {

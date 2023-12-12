@@ -1,41 +1,45 @@
 package com.nhnacademy.aiot.node;
 
-import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONObject;
 import com.nhnacademy.aiot.message.JsonMessage;
+import com.nhnacademy.aiot.modbus.client.Broker;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MqttInNode extends InputNode {
-    private IMqttClient server = null;
+    private Broker broker;
+    private String topicSplit = "#";
+    private String brokerName;
 
     public MqttInNode(String name, int count) {
         super(name, count);
     }
 
+    public void setBroker(Broker broker) {
+        this.broker = broker;
+    }
+
+    public void setTopic(String topicSplit) {
+        this.topicSplit = topicSplit;
+    }
+
+    public String getBrokerName() {
+        return brokerName;
+    }
+
+    public void setBrokerName(String brokerName) {
+        this.brokerName = brokerName;
+    }
 
 
     public void connectServer() {
-        try {
-            server = new MqttClient("tcp://ems.nhnacademy.com", super.getId().toString(), null);
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setAutomaticReconnect(true);
-            options.setCleanSession(true);
-            options.setConnectionTimeout(10);
-            options.setKeepAliveInterval(1000);
-            options.setWill("test/will", "Disconnected".getBytes(), 2, false);
-            server.connect(options);
-        } catch (MqttException e) {
-            log.error("error-", e);
-        }
+        broker.connect();
     }
 
     public void serverSubscribe() {
         try {
-            server.subscribe("#", (topic, msg) -> {
+            broker.getBroker().subscribe(topicSplit, (topic, msg) -> {
                 JSONObject jsonObject = new JSONObject(msg);
                 jsonObject.put("topic", topic);
                 if (topic.contains("application")) {
@@ -54,13 +58,12 @@ public class MqttInNode extends InputNode {
     @Override
     void preprocess() {
         log.info("Node Start");
-        connectServer();
         serverSubscribe();
     }
 
     @Override
     void process() {
-        if (!server.isConnected()) {
+        if (!broker.getBroker().isConnected()) {
             connectServer();
             serverSubscribe();
         }
