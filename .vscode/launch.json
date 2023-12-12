@@ -6,6 +6,27 @@
   "configurations": [
     {
       "type": "java",
+      "name": "ReadPostgres",
+      "request": "launch",
+      "mainClass": "com.nhnacademy.aiot.database.ReadPostgres",
+      "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+      "type": "java",
+      "name": "RedisTest",
+      "request": "launch",
+      "mainClass": "com.nhnacademy.aiot.database.RedisTest",
+      "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+      "type": "java",
+      "name": "PostgresTest",
+      "request": "launch",
+      "mainClass": "com.nhnacademy.aiot.database.PostgresTest",
+      "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+      "type": "java",
       "name": "SimpleNodeRed",
       "request": "launch",
       "mainClass": "com.nhnacademy.aiot.gateway.SimpleNodeRed",
@@ -15,7 +36,7 @@
         "--an",
         "application/+/device/+/event/up",
         "-s",
-        "temperature,humidity,co2,leq"
+        "temperature,humidity"
       ]
     },
     {

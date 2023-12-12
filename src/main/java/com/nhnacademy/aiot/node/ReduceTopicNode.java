@@ -21,8 +21,6 @@ public class ReduceTopicNode extends InputOutputNode {
 
         return String.format("data/s/%s/b/%s/d/%s/p/%s/e/%s", site, branch, devEui, place, sensor);
     }
-    // data/s/nhnacademy/b/gyeongnam/p/class_b/e/spl
-    // data/d/24e124136d 151547/p/창고/e/temperature:msg.payload:
 
     @Override
     void preprocess() {
