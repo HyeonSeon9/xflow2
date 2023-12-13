@@ -18,9 +18,13 @@ public class PostgresOutNode extends OutputNode {
     String user = "postgres";
     String password = "root";
     static int temp = 100;
-    static int humi = 200;    staic i    static int unit2 = 100;
+    static int humi = 200;
+    static int unit = 100;
 
-    public PostgresOutNode(       super(name, count);
+    static int unit2 = 100;
+
+    public PostgresOutNode(String name, int count) {
+        super(name, count);
         try {
             setup();
         } catch (SQLException e) {
