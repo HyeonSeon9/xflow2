@@ -42,7 +42,7 @@ public class PostgresOutNode extends OutputNode {
     void process() {
         for (int i = 0; i < getInputWireCount(); i++) {
             while (getInputWire(i).hasMessage()) {
-                Message message = getInputWire(0).get();
+                Message message = getInputWire(i).get();
                 JSONObject jsonObject = ((JsonMessage) message).getPayload();
                 String type = jsonObject.getString("sensor");
                 String deviceEui = jsonObject.getString("deviceEui");

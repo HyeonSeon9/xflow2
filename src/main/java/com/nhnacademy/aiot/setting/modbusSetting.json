@@ -1,73 +1,76 @@
 [
     [
-      {
-        "id": "mqttIn",
-        "type": "MqttInNode",
-        "broker": "777155e1e7687505",
-        "wire": [["split"]]
-      },
-      {
-        "id": "split",
-        "type": "SplitNode",
-        "wire": [["placeTrans"], ["SplitDebug"]]
-      },
-      {
-        "id": "placeTrans",
-        "type": "PlaceTranslatorNode",
-        "wire": [["reduceTopic"], ["PlaceDebug"]]
-      },
-  
-      {
-        "id": "reduceTopic",
-        "type": "ReduceTopicNode",
-        "wire": [["mqttOut"], ["postgres"]]
-      },
-      {
-        "id": "postgres",
-        "type": "PostgresOutNode",
-        "wire": [[]]
-      },
-      {
-        "id": "mqttOut",
-        "type": "MqttOutNode",
-        "broker": "c94037b4662b2b1d",
-        "wire": []
-      },
-      {
-        "id": "SplitDebug",
-        "type": "DebugNode",
-        "wire": []
-      },
-      {
-        "id": "PlaceDebug",
-        "type": "DebugNode",
-        "wire": []
-      },
-      {
-        "id": "777155e1e7687505",
-        "type": "Broker",
-        "name": "NHN academy EMS",
-        "broker": "ems.nhnacademy.com",
-        "port": "1883",
-        "autoConnect": true,
-        "keepalive": "60",
-        "cleansession": true
-      },
-      {
-        "id": "c94037b4662b2b1d",
-        "type": "Broker",
-        "name": "my",
-        "broker": "localhost",
-        "port": "1883",
-        "autoConnect": true,
-        "keepalive": "60",
-        "cleansession": true
-      }
-    ],
-    [
-      {
-        "--an": "application/+/device/+/event/up",
-        "-s": "temperature,humidity"
-      }
+        {
+            "id": "inject",
+            "type": "InjectNode",
+            "wire": [
+                [
+                    "modbusServer"
+                ]
+            ]
+        },
+        {
+            "id": "modbusRead",
+            "type": "ModbusReadNode",
+            "unitid": "",
+            "dataType": "HoldingRegister",
+            "adr": "0",
+            "quantity": "5",
+            "server": "modbusClient",
+            "wire": [
+                [
+                    "ReadDebug"
+                ],
+                []
+            ]
+        },
+        {
+            "id": "modbusServer",
+            "type": "ModbusServerNode",
+            "hostname": "0.0.0.0",
+            "serverPort": "11502",
+            "holdingBufferSize": 10000,
+            "inputBufferSize": 10000,
+            "wire": [
+                [],
+                [],
+                [],
+                [],
+                []
+            ]
+        },
+        {
+            "id": "modbusWrite",
+            "type": "ModbusWriteNode",
+            "dataType": "HoldingRegister",
+            "quantity": "1",
+            "adr": "1",
+            "server": "modbusClient",
+            "wire": [
+                [
+                    "WriteDebug"
+                ],
+                []
+            ]
+        },
+        {
+            "id": "WriteDebug",
+            "type": "DebugNode",
+            "wire": []
+        },
+        {
+            "id": "ReadDebug",
+            "type": "DebugNode",
+            "wire": []
+        },
+        {
+            "id": "modbusClient",
+            "type": "Client",
+            "clienttype": "tcp",
+            "name": "localhost",
+            "tcpHost": "0.0.0.0",
+            "tcpPort": "11502",
+            "unit_id": "1"
+        }
     ]
-  ]
+]
