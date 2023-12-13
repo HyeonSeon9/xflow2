@@ -32,13 +32,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SettingNode {
+    // rotected static String settingPath =     // "src/main/java/com/nhnacademy/aiot/setting/nodeSetting.json";
     protected static String settingPath =
-            "src/main/java/com/nhnacademy/aiot/setting/nodeSetting.json";
-    // protected static String settingPath =
-    // "src/main/java/com/nhnacademy/aiot/setting/modbusSetting.json";
+            "src/main/java/com/nhnacademy/aiot/setting/modbusSetting.json";
     protected static String path = "com.nhnacademy.aiot.node.";
-    protected static String clientPath = "com.nhnacademy.aiot.modbus.client.";
-    private HashMap<String, ActiveNode> nodeList;
+    protected static String clientPath = "com.nhnacademy.aiot.modbus.c
+        pri
+
     private HashMap<Integer, List<String>> wireput;
     private HashMap<String, Map<Integer, List<String>>> wireMap;
     private HashMap<String, Client> clientMap;

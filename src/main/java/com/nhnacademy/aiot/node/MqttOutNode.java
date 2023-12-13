@@ -1,47 +1,54 @@
 package com.nhnacademy.aiot.node;
 
-import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONObject;
 import com.nhnacademy.aiot.message.JsonMessage;
 import com.nhnacademy.aiot.message.Message;
+import com.nhnacademy.aiot.modbus.client.Broker;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MqttOutNode extends OutputNode {
 
-    private IMqttClient local = null;
+    private Broker broker;
+    private String topicSplit = "#";
+    private String brokerName;
 
     public MqttOutNode(String name, int count) {
         super(name, count);
     }
 
-    public void connectLocalHost() {
-        try {
-            local = new MqttClient("tcp://localhost", super.getId().toString(), null);
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setAutomaticReconnect(true);
-            options.setCleanSession(true);
-            options.setConnectionTimeout(10);
-            options.setKeepAliveInterval(1000);
-            options.setWill("test/will", "Disconnected".getBytes(), 2, false);
-            local.connect(options);
-        } catch (MqttException e) {
-            log.error("error-", e);
-        }
+    public void setBroker(Broker broker) {
+        this.broker = broker;
+    }
+
+    public void setTopic(String topicSplit) {
+        this.topicSplit = topicSplit;
+    }
+
+    public String getBrokerName() {
+        return brokerName;
+    }
+
+    public void setBrokerName(String brokerName) {
+        this.brokerName = brokerName;
+    }
+
+    public void connectServer() {
+        broker.connect();
     }
 
     @Override
     void preprocess() {
         log.info("Node Start");
-        connectLocalHost();
     }
 
     @Override
     void process() {
+        if (!broker.getBroker().isConnected()) {
+            connectServer();
+        }
 
         if (((getInputWire(0) != null) && (getInputWire(0).hasMessage()))) {
 
@@ -55,9 +62,7 @@ public class MqttOutNode extends OutputNode {
                 MqttMessage mqttMessage = new MqttMessage();
                 mqttMessage.setPayload(payload.toString().getBytes());
 
-                // System.out.println(topic);
-                // System.out.println(mqttMessage);
-                local.publish(topic, mqttMessage);
+                broker.getBroker().publish(topic, mqttMessage);
             } catch (MqttException e) {
                 log.error("error-", e);
             }

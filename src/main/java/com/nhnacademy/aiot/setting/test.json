@@ -9,38 +9,27 @@
     {
       "id": "split",
       "type": "SplitNode",
-      "wire": [["placeTrans"], ["SplitDebug"]]
+      "wire": [["placeTrans"]]
     },
     {
       "id": "placeTrans",
       "type": "PlaceTranslatorNode",
-      "wire": [["reduceTopic", "PlaceDebug", "postgres"]]
+      "wire": [["RuleEngine"]]
     },
-
+    {
+      "id": "RuleEngine",
+      "type": "RuleEngineNode",
+      "wire": [["reduceTopic"]]
+    },
     {
       "id": "reduceTopic",
       "type": "ReduceTopicNode",
       "wire": [["mqttOut"]]
     },
     {
-      "id": "postgres",
-      "type": "PostgresOutNode",
-      "wire": []
-    },
-    {
       "id": "mqttOut",
       "type": "MqttOutNode",
       "broker": "c94037b4662b2b1d",
-      "wire": []
-    },
-    {
-      "id": "SplitDebug",
-      "type": "DebugNode",
-      "wire": []
-    },
-    {
-      "id": "PlaceDebug",
-      "type": "DebugNode",
       "wire": []
     },
     {

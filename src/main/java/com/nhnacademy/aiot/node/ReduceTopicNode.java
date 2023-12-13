@@ -22,8 +22,6 @@ public class ReduceTopicNode extends InputOutputNode {
         return String.format("data/s/%s/b/%s/d/%s/p/%s/e/%s", site, branch, devEui, place, sensor);
     }
 
-    // data/d/24e124136d 151547/p/창고/e/temperature:msg.payload:
-
     @Override
     void preprocess() {
         log.info("Node Start");
@@ -42,7 +40,7 @@ public class ReduceTopicNode extends InputOutputNode {
 
             jsonObject.put("prev", "Reduce");
             log.info("패킷전송");
-            output(new JsonMessage(new JSONObject(jsonObject.toString())));
+            output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
         }
     }
 
