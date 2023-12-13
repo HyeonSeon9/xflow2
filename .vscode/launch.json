@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "PostgresCreateTable",
+      "request": "launch",
+      "mainClass": "com.nhnacademy.aiot.database.PostgresCreateTable",
+      "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+      "type": "java",
       "name": "ReadPostgres",
       "request": "launch",
       "mainClass": "com.nhnacademy.aiot.database.ReadPostgres",

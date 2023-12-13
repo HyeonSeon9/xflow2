@@ -14,13 +14,18 @@
     {
       "id": "placeTrans",
       "type": "PlaceTranslatorNode",
-      "wire": [["RuleEngine"]]
+      "wire": [["PostgresOut"]]
+    },
+    {
+      "id": "PostgresOut",
+      "type": "PostgresOutNode",
+      "wire": []
     },
     {
       "id": "RuleEngine",
       "type": "RuleEngineNode",
       "redis": "redis",
-      "wire": [["reduceTopic", "debug1"], ["debug2"]]
+      "wire": [["reduceTopic"]]
     },
     {
       "id": "reduceTopic",
@@ -31,16 +36,6 @@
       "id": "mqttOut",
       "type": "MqttOutNode",
       "broker": "c94037b4662b2b1d",
-      "wire": []
-    },
-    {
-      "id": "debug1",
-      "type": "DebugNode",
-      "wire": []
-    },
-    {
-      "id": "debug2",
-      "type": "DebugNode",
       "wire": []
     },
     {
