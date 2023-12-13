@@ -13,7 +13,7 @@
     {
       "id": "placeTrans",
       "type": "PlaceTranslatorNode",
-      "wire": [["reduceTopic"], ["PlaceDebug"]]
+      "wire": [["reduceTopic", "PlaceDebug", "postgres"]]
     },
 
     {
