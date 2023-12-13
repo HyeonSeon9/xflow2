@@ -69,18 +69,34 @@
             "wire": [
                 [
                     "reduceTopic"
-                ]
-                ,
+                ],
                 [
                     "modbusMapper"
                 ]
-            ]  
+            ]
         },
         {
             "id": "modbusMapper",
             "type": "ModbusMapperNode",
             "wire": [
-    
+                [
+                "modbusSlaveServer"
+                ]
+            ]
+        },
+        {
+            "id": "modbusSlaveServer",
+            "type": "ModbusSlaveServerNode",
+            "hostname": "0.0.0.0",
+            "serverPort": "11502",
+            "holdingBufferSize": 10000,
+            "inputBufferSize": 10000,
+            "wire": [
+                [],
+                [],
+                [],
+                [],
+                []
             ]
         },
         {

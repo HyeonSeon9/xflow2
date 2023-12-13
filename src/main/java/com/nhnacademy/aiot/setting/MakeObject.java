@@ -15,6 +15,7 @@ import com.nhnacademy.aiot.modbus.client.Client;
 import com.nhnacademy.aiot.node.ActiveNode;
 import com.nhnacademy.aiot.node.ModbusReadNode;
 import com.nhnacademy.aiot.node.ModbusServerNode;
+import com.nhnacademy.aiot.node.ModbusSlaveServerNode;
 import com.nhnacademy.aiot.node.ModbusWriteNode;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,7 +54,7 @@ public class MakeObject {
             }
 
             Object newObj = nodeConstructor.newInstance(nodeId, wireSize < 1 ? 1 : wireSize);
-
+            System.out.println("++++++++++++"+newObj.getClass());
             int wirePort = 0;
             if (Objects.nonNull(wireInfo) && !wireInfo.isEmpty()) {
                 wireput = new HashMap<>();
@@ -91,7 +92,7 @@ public class MakeObject {
                 setServerName.invoke(newObj, serverName);
                 setAddress.invoke(newObj, address);
 
-            } else if (newObj instanceof ModbusServerNode) {
+            } else if (newObj instanceof ModbusServerNode || newObj instanceof ModbusSlaveServerNode) {
                 Method setHoldingRegisters =
                         newObj.getClass().getMethod("setHoldingRegisters", int.class);
                 Method setInputRegisters =
