@@ -1,15 +1,13 @@
-package com.nhnacademy.aiot.gateway;
+package com.nhnacademy.aiot.setting;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -19,46 +17,55 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import com.nhnacademy.aiot.modbus.client.Broker;
 import com.nhnacademy.aiot.modbus.client.Client;
+import com.nhnacademy.aiot.modbus.client.Redis;
 import com.nhnacademy.aiot.node.ActiveNode;
 import com.nhnacademy.aiot.node.ModbusReadNode;
 import com.nhnacademy.aiot.node.ModbusServerNode;
 import com.nhnacademy.aiot.node.ModbusWriteNode;
+import com.nhnacademy.aiot.node.MqttInNode;
+import com.nhnacademy.aiot.node.MqttOutNode;
 import com.nhnacademy.aiot.node.PlaceTranslatorNode;
+import com.nhnacademy.aiot.node.RuleEngineNode;
 import com.nhnacademy.aiot.node.SplitNode;
 import com.nhnacademy.aiot.wire.BufferedWire;
 import com.nhnacademy.aiot.wire.Wire;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SettingNode {
+public class BeforeSetting {
     // protected static String settingPath =
     // "src/main/java/com/nhnacademy/aiot/setting/nodeSetting.json";
-    protected static String settingPath =
-            "src/main/java/com/nhnacademy/aiot/setting/modbusSetting.json";
+    // protected static String settingPath =
+    // "src/main/java/com/nhnacademy/aiot/setting/modbusSetting.json";
+
+    protected static String settingPath = "src/main/java/com/nhnacademy/aiot/setting/test.json";
+    // protected static String settingPath =
+    // "src/main/java/com/nhnacademy/aiot/setting/postgresCrete.json";
+    private Map<String, ActiveNode> nodeList;
+    private Map<String, Map<Integer, List<String>>> wireMap;
+    private Map<String, Client> clientMap;
+    private Map<String, Broker> brokerMap;
+    private Map<String, Redis> redisMap;
+
     protected static String path = "com.nhnacademy.aiot.node.";
     protected static String clientPath = "com.nhnacademy.aiot.modbus.client.";
-    private HashMap<String, ActiveNode> nodeList;
-    private HashMap<Integer, List<String>> wireput;
-    private HashMap<String, Map<Integer, List<String>>> wireMap;
-    private HashMap<String, Client> clientMap;
-    private Object object;
+
+    private Object flowObjects;
 
     private String aplicationName = "#";
     private List<String> sensors;
-
+    private MakeObject makeObject;
     private boolean checkcommand;
 
-    public SettingNode() {
-        this.nodeList = new HashMap<>();
-        this.wireMap = new HashMap<>();
-        this.wireput = new HashMap<>();
-        this.clientMap = new HashMap<>();
+    public BeforeSetting() {
 
         try {
-            this.object = new JSONParser().parse(new FileReader(settingPath));
+            this.makeObject = new MakeObject();
+            this.flowObjects = new JSONParser().parse(new FileReader(settingPath));
         } catch (IOException | ParseException e) {
-
+            System.err.println(e.getMessage());
         }
     }
 
@@ -78,104 +85,34 @@ public class SettingNode {
         this.sensors = sensors;
     }
 
-    private void makeNode(JSONObject node) {
-        try {
-            String nodeType = (String) node.get("type");
-            String nodeId = (String) node.get("id");
-            Class<?> nodeClass = Class.forName(path + nodeType);
-            Constructor<?> nodeConstructor = nodeClass.getConstructor(String.class, int.class);
-            JSONArray wireInfo = null;
-            int wireSize = 0;
-            if (Objects.nonNull(node.get("wire"))) {
-                wireInfo = (JSONArray) node.get("wire");
-                wireSize = wireInfo.size();
-            }
-            Object newObj = nodeConstructor.newInstance(nodeId, wireSize < 1 ? 1 : wireSize);
-            int wirePort = 0;
-            if (Objects.nonNull(wireInfo) && !wireInfo.isEmpty()) {
-                wireput = new HashMap<>();
-                for (Object w : wireInfo) {
-                    List<String> wireOutList = new ArrayList<>();
-                    JSONArray wireArray = (JSONArray) w;
-                    for (Object connectWire : wireArray) {
-                        wireOutList.add((String) connectWire);
-                    }
-                    wireput.put(wirePort, wireOutList);
-                    wirePort++;
-                }
-                wireMap.put(nodeId, wireput);
-            }
-            if (newObj instanceof ModbusReadNode || newObj instanceof ModbusWriteNode) {
-                Method setDataType = newObj.getClass().getMethod("setDataType", String.class);
-                Method setQuantity = newObj.getClass().getMethod("setQuantity", int.class);
-                Method setServerName = newObj.getClass().getMethod("setServerName", String.class);
-                Method setAddress = newObj.getClass().getMethod("setAddress", int.class);
-
-                String dataType = (String) node.get("dataType");
-                int quantity = Integer.parseInt(node.get("quantity").toString());
-                String serverName = (String) node.get("server");
-                int address = Integer.parseInt(node.get("adr").toString());
-
-                setDataType.invoke(newObj, dataType);
-                setQuantity.invoke(newObj, quantity);
-                setServerName.invoke(newObj, serverName);
-                setAddress.invoke(newObj, address);
-
-            } else if (newObj instanceof ModbusServerNode) {
-                Method setHoldingRegisters =
-                        newObj.getClass().getMethod("setHoldingRegisters", int.class);
-                Method setInputRegisters =
-                        newObj.getClass().getMethod("setInputRegisters", int.class);
-                Method setServerPort = newObj.getClass().getMethod("setServerPort", int.class);
-
-                int holdingBufferSize = Integer.parseInt(node.get("holdingBufferSize").toString());
-                int inputBufferSize = Integer.parseInt(node.get("inputBufferSize").toString());
-                int serverPort = Integer.parseInt(node.get("serverPort").toString());
-
-                setHoldingRegisters.invoke(newObj, holdingBufferSize);
-                setInputRegisters.invoke(newObj, inputBufferSize);
-                setServerPort.invoke(newObj, serverPort);
-            }
-            nodeList.put(nodeId, (ActiveNode) newObj);
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-                | IllegalAccessException | InvocationTargetException e) {
-            log.error("error-", e);
-        }
-
+    public void loadObjectList() {
+        this.nodeList = makeObject.getNodeList();
+        this.wireMap = makeObject.getWireMap();
+        this.clientMap = makeObject.getClientMap();
+        this.brokerMap = makeObject.getBrokerMap();
+        this.redisMap = makeObject.getRedisMap();
     }
 
-    private void makeClient(JSONObject node) {
-        try {
-            String clientType = (String) node.get("type");
-            String clientId = (String) node.get("id");
-            String clientName = (String) node.get("name");
-            String host = (String) node.get("tcpHost");
-            int port = Integer.parseInt(node.get("tcpPort").toString());
-            int unitId = Integer.parseInt(node.get("unit_id").toString());
-            Class<?> clientClass = Class.forName(clientPath + clientType);
-            Constructor<?> clientConstructor =
-                    clientClass.getConstructor(String.class, String.class, int.class, int.class);
-            Object client = clientConstructor.newInstance(clientName, host, port, unitId);
-            clientMap.put(clientId, (Client) client);
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-                | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void makeFlow() {
-        JSONArray flowJson = ((JSONArray) object);
-        for (Object node : (JSONArray) flowJson.get(0)) {
-            String nodeType = (String) ((JSONObject) node).get("type");
-            if (nodeType.contains("Node")) {
-                makeNode((JSONObject) node);
-            } else {
-                makeClient((JSONObject) node);
+        JSONArray flowJson = ((JSONArray) flowObjects);
+        for (Object object : (JSONArray) flowJson.get(0)) {
+            String objectType = (String) ((JSONObject) object).get("type");
+            if (objectType.contains("Node")) {
+                makeObject.makeNode((JSONObject) object);
+            } else if (objectType.equals("Client")) {
+                makeObject.makeClient((JSONObject) object);
+            } else if (objectType.equals("Broker")) {
+                makeObject.makeBroker((JSONObject) object);
+            } else if (objectType.equals("Redis")) {
+                makeObject.makeRedisServer((JSONObject) object);
             }
         }
+        loadObjectList();
     }
 
     public void connectWire() {
+
         try {
             for (String input : wireMap.keySet()) {
                 Map<Integer, List<String>> getWireMap = wireMap.get(input);
@@ -225,6 +162,28 @@ public class SettingNode {
                         | InvocationTargetException e) {
                     System.err.println(e.getMessage());
                 }
+            } else if (node instanceof MqttInNode || node instanceof MqttOutNode) {
+
+                try {
+                    Method getBrokerName = node.getClass().getMethod("getBrokerName");
+                    Method setBroker = node.getClass().getMethod("setBroker", Broker.class);
+                    String brokerName = (String) getBrokerName.invoke(node);
+
+                    setBroker.invoke(node, brokerMap.get(brokerName));
+                } catch (NoSuchMethodException | IllegalAccessException
+                        | InvocationTargetException e) {
+                    System.err.println(e.getMessage());
+                }
+            } else if (node instanceof RuleEngineNode) {
+                try {
+                    Method getRedisName = node.getClass().getMethod("getRedisName");
+                    Method setRedis = node.getClass().getMethod("setRedis", Redis.class);
+                    String redisName = (String) getRedisName.invoke(node);
+                    setRedis.invoke(node, redisMap.get(redisName));
+                } catch (NoSuchMethodException | IllegalAccessException
+                        | InvocationTargetException e) {
+                    System.err.println(e.getMessage());
+                }
             }
             node.start();
         }
@@ -240,7 +199,7 @@ public class SettingNode {
     }
 
     private void setSplitOption(SplitNode node) {
-        JSONArray flowJson = ((JSONArray) object);
+        JSONArray flowJson = ((JSONArray) flowObjects);
         for (Object setting : (JSONArray) flowJson.get(1)) {
             this.aplicationName = (String) ((JSONObject) setting).get("--an");
 

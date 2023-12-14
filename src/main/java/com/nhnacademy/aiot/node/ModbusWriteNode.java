@@ -56,7 +56,7 @@ public class ModbusWriteNode extends InputOutputNode {
         byte[] pdu = SimpleMB.makeWriteHoldingRegistersRequest(count, 5);
         byte[] request = SimpleMB.addMBAP(count++, server.getUnitId(), pdu);
         byte[] receive = server.sendAndReceive(request);
-        output(new ByteMessage(receive));
+        output(0, new ByteMessage(receive));
     }
 
 }
