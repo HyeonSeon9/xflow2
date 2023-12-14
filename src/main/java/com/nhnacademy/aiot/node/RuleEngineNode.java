@@ -35,12 +35,41 @@ public class RuleEngineNode extends InputOutputNode {
         this.redis = redis;
     }
 
+    public JSONObject MqttToModbus(JSONObject jsonObject, int address) {
+        JSONObject modbusRequest = new JSONObject();
+        float value = jsonObject.getJSONObject("payload").getFloat("value");
+
+        modbusRequest.put("value", value);
+        modbusRequest.put("address", address);
+        modbusRequest.put("register", "input");
+        return modbusRequest;
+    }
+
+    public JSONObject findByTypeAndDeviceEui(JSONObject jsonObject) {
+        String type = (String) jsonObject.get("sensor");
+        String deviceEui = (String) jsonObject.get("deviceEui");
+
+        JSONObject obj = jsonArray.stream()
+                .filter(x -> x.getString("type").equals(type)
+                        && x.getString("deviceeui").equals(deviceEui))
+                .map(JSONObject.class::cast).findFirst().orElse(null);
+        return obj;
+    }
+
+
+    public void redisInsert(JSONObject jsonObject, float value) {
+        int id = Integer.parseInt(jsonObject.getString("id"));
+        System.out.println("insert into id" + id);
+        redis.hsetPut("sensorInfo", String.valueOf(id), String.valueOf(value));
+    }
+
     @Override
     void preprocess() {
         redis.connect();
         setJsonArray(ReadPostgres.getJsonArray());
 
     }
+
 
 
     @Override
@@ -51,26 +80,16 @@ public class RuleEngineNode extends InputOutputNode {
                 if (message instanceof JsonMessage) {
                     JSONObject jsonObject =
                             new JSONObject(((JsonMessage) message).getPayload().toString());
-
-                    String type = (String) jsonObject.get("sensor");
-                    String deviceEui = (String) jsonObject.get("deviceEui");
-
-                    JSONObject obj = jsonArray.stream()
-                            .filter(x -> x.getString("type").equals(type)
-                                    && x.getString("deviceeui").equals(deviceEui))
-                            .map(JSONObject.class::cast).findFirst().orElse(null);
-                    int id = Integer.parseInt(obj.getString("id"));
-                    redis.hsetPut("sensorInfo", String.valueOf(id), String
-                            .valueOf(((JSONObject) (jsonObject.get("payload"))).get("value")));
-                    System.out.println(id + ">>>" + jsonObject.get("place") + " > " + type + " : "
-                            + ((JSONObject) (jsonObject.get("payload"))).get("value"));
-                    output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
-                    int address = obj.getInt("address");
+                    JSONObject insertElement = findByTypeAndDeviceEui(jsonObject);
                     float value = jsonObject.getJSONObject("payload").getFloat("value");
-
+                    redisInsert(insertElement, value);
+                    output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
+                    int address = insertElement.getInt("address");
+                    JSONObject modbusRequest = MqttToModbus(jsonObject, address);
                     byte[] request = SimpleMB.addMBAP(0, 1,
                             SimpleMB.makeWriteHoldingRegistersRequest(address, (int) value * 100));
-                    output(1, new ByteMessage(request));
+                    // output(1, new ByteMessage(request));
+                    output(1, new JsonMessage(new JSONObject(modbusRequest.toString())));
                 } else {
                     byte[] byteObject = ((ByteMessage) message).getPayload();
 

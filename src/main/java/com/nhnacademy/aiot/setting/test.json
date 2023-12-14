@@ -20,7 +20,10 @@
       "id": "RuleEngine",
       "type": "RuleEngineNode",
       "redis": "redis",
-      "wire": [["reduceTopic", "debug1"], ["debug2"]]
+      "wire": [
+        ["reduceTopic", "debug1"],
+        ["debug2", "modbusServer"]
+      ]
     },
     {
       "id": "reduceTopic",
@@ -42,6 +45,15 @@
       "id": "debug2",
       "type": "DebugNode",
       "wire": []
+    },
+    {
+      "id": "modbusServer",
+      "type": "ModbusServerNode",
+      "hostname": "0.0.0.0",
+      "serverPort": "11502",
+      "holdingBufferSize": 10000,
+      "inputBufferSize": 10000,
+      "wire": [[], [], [], [], []]
     },
     {
       "id": "777155e1e7687505",
