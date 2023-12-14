@@ -14,7 +14,7 @@ public class InjectNode extends InputNode {
 
     public InjectNode(String name, int count) {
         super(name, count);
-        setInterval(1000);
+        setInterval(3000);
         this.random = new Random();
         this.endAddress = 10;
         this.startValue = 20;

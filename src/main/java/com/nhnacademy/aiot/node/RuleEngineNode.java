@@ -61,6 +61,7 @@ public class RuleEngineNode extends InputOutputNode {
     }
 
 
+
     public void redisInsert(JSONObject jsonObject, float value) {
         int id = Integer.parseInt(jsonObject.getString("id"));
         redis.hsetPut("sensorInfo", String.valueOf(id), String.valueOf(value));
@@ -72,8 +73,6 @@ public class RuleEngineNode extends InputOutputNode {
         setJsonArray(ReadPostgres.getJsonArray());
 
     }
-
-
 
     @Override
     void process() {
@@ -91,11 +90,29 @@ public class RuleEngineNode extends InputOutputNode {
                     JSONObject modbusRequest = MqttToModbus(jsonObject, address);
                     output(1, new JsonMessage(new JSONObject(modbusRequest.toString())));
                 } else {
-                    byte[] byteObject = ((ByteMessage) message).getPayload();
-                    if (byteObject[7] == 3) {
-                    } else {
-                        log.info(">>>>>>>>{}", Arrays.toString(SimpleMB.addByte(byteObject)));
-                    }
+                    // ((ByteMessage) message).getPayload();
+
+                    byte[] byteObject = Arrays.copyOf(((ByteMessage) message).getPayload(),
+                            ((ByteMessage) message).getPayload().length);
+                    int virtualId = byteObject[8];
+                    int virtualAddress = SimpleMB.readTwoByte(byteObject[0], byteObject[1]);
+                    int value = SimpleMB.readTwoByte(byteObject[byteObject.length - 2],
+                            byteObject[byteObject.length - 1]);
+
+                    JSONObject jsonObject = jsonArray.stream()
+                            .filter(x -> x.getInt("virtualaddress") == (virtualAddress)
+                                    && x.getInt("virtualid") == virtualId)
+                            .map(JSONObject.class::cast).findFirst().orElse(null);
+
+                    int address = jsonObject.getInt("address");
+
+                    JSONObject modbusRequest = new JSONObject();
+                    modbusRequest.put("value", value * 0.01);
+                    modbusRequest.put("address", address);
+                    modbusRequest.put("register", "input");
+                    System.out.println(modbusRequest);
+                    output(1, new JsonMessage(new JSONObject(modbusRequest.toString())));
+
                 }
             }
         }
