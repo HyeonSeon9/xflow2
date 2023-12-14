@@ -1,5 +1,6 @@
 package com.nhnacademy.aiot.node;
 
+import java.util.Arrays;
 import java.util.List;
 import org.json.JSONObject;
 import com.nhnacademy.aiot.database.ReadPostgres;
@@ -8,7 +9,10 @@ import com.nhnacademy.aiot.message.JsonMessage;
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.modbus.client.Redis;
 import com.nhnacademy.aiot.modbus.server.SimpleMB;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 public class RuleEngineNode extends InputOutputNode {
 
     List<JSONObject> jsonArray;
@@ -59,7 +63,6 @@ public class RuleEngineNode extends InputOutputNode {
 
     public void redisInsert(JSONObject jsonObject, float value) {
         int id = Integer.parseInt(jsonObject.getString("id"));
-        System.out.println("insert into id" + id);
         redis.hsetPut("sensorInfo", String.valueOf(id), String.valueOf(value));
     }
 
@@ -86,13 +89,13 @@ public class RuleEngineNode extends InputOutputNode {
                     output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
                     int address = insertElement.getInt("address");
                     JSONObject modbusRequest = MqttToModbus(jsonObject, address);
-                    byte[] request = SimpleMB.addMBAP(0, 1,
-                            SimpleMB.makeWriteHoldingRegistersRequest(address, (int) value * 100));
-                    // output(1, new ByteMessage(request));
                     output(1, new JsonMessage(new JSONObject(modbusRequest.toString())));
                 } else {
                     byte[] byteObject = ((ByteMessage) message).getPayload();
-
+                    if (byteObject[7] == 3) {
+                    } else {
+                        log.info(">>>>>>>>{}", Arrays.toString(SimpleMB.addByte(byteObject)));
+                    }
                 }
             }
         }

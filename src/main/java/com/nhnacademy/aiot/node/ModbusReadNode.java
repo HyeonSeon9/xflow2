@@ -1,9 +1,13 @@
 package com.nhnacademy.aiot.node;
 
+import java.util.Arrays;
 import com.nhnacademy.aiot.message.ByteMessage;
 import com.nhnacademy.aiot.modbus.client.Client;
 import com.nhnacademy.aiot.modbus.server.SimpleMB;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 public class ModbusReadNode extends InputNode {
     private String dataType;
     private int quantity;
@@ -19,7 +23,7 @@ public class ModbusReadNode extends InputNode {
 
     public ModbusReadNode(String name, int port) {
         super(name, port);
-        setInterval(10000000);
+        setInterval(3000);
     }
 
     public void setDataType(String dataType) {
@@ -54,10 +58,11 @@ public class ModbusReadNode extends InputNode {
 
     @Override
     void process() {
-        byte[] pdu = SimpleMB.makeReadHoldingRegistersRequest(address, quantity);
+        byte[] pdu = SimpleMB.makeReadInputRegistersRequest(address, quantity);
         byte[] request = SimpleMB.addMBAP(count++, server.getUnitId(), pdu);
         byte[] response = server.sendAndReceive(request);
-
+        log.info("---------------------------{}", Arrays.toString(response));
+        log.info("---------------------------{}", SimpleMB.readTwoByte(response[9], response[10]));
         output(0, new ByteMessage(response));
 
     }

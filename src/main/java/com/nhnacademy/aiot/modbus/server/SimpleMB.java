@@ -27,6 +27,24 @@ public class SimpleMB {
         return frame;
     }
 
+    public static byte[] makeReadInputRegistersRequest(int address, int quantity) {
+        byte[] frame = new byte[5];
+
+        // PDU의 function code
+        frame[0] = 0x04;
+
+        // PDU의 data
+        byte[] addressByte = intToByte(address);
+        frame[1] = addressByte[0];
+        frame[2] = addressByte[1];
+
+        byte[] quantityByte = intToByte(quantity);
+        frame[3] = quantityByte[0];
+        frame[4] = quantityByte[1];
+
+        return frame;
+    }
+
     public static byte[] makeWriteHoldingRegistersRequest(int address, int value) {
         byte[] frame = new byte[5];
 

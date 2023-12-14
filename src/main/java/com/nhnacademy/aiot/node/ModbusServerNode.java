@@ -29,6 +29,7 @@ public class ModbusServerNode extends InputOutputNode {
 
     public void setHoldingRegisters(int holdingBufferSize) {
         this.holdingRegisters = new int[holdingBufferSize];
+
     }
 
     public void setInputRegisters(int inputBufferSize) {
@@ -62,7 +63,6 @@ public class ModbusServerNode extends InputOutputNode {
                     int address = jsonObject.getInt("address");
                     if (jsonObject.getString("register").equals("input")) {
                         inputRegisters[address] = (int) (value * 100);
-                        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>" + inputRegisters[address]);
                     }
                 } else {
                     byte[] data = ((ByteMessage) message).getPayload();
