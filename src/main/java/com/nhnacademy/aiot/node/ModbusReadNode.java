@@ -58,7 +58,7 @@ public class ModbusReadNode extends InputNode {
         byte[] request = SimpleMB.addMBAP(count++, server.getUnitId(), pdu);
         byte[] response = server.sendAndReceive(request);
 
-        output(new ByteMessage(response));
+        output(0, new ByteMessage(response));
 
     }
 

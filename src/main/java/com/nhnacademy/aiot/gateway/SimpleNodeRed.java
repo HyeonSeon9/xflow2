@@ -1,12 +1,14 @@
 package com.nhnacademy.aiot.gateway;
 
+import com.nhnacademy.aiot.setting.BeforeSetting;
+
 public class SimpleNodeRed {
 
     public static void main(String[] args) {
-        SettingNode settingNode = new SettingNode();
-        settingNode.checkCommandLine(args);
-        settingNode.makeFlow();
-        settingNode.connectWire();
-        settingNode.nodeStart();
+        BeforeSetting beforeSetting = new BeforeSetting();
+        beforeSetting.checkCommandLine(args);
+        beforeSetting.makeFlow();
+        beforeSetting.connectWire();
+        beforeSetting.nodeStart();
     }
 }

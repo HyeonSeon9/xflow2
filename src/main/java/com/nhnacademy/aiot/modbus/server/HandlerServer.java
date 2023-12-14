@@ -69,6 +69,20 @@ public class HandlerServer implements Runnable {
                                 outputStream.flush();
                             }
                             break;
+                        case 4:
+                            if (address + quantity < inputRegisters.length) {
+                                System.out.println(
+                                        "Address : " + address + ", Quantity: " + quantity);
+
+                                byte[] response = SimpleMB.makeReadInputRegistersResponse(Arrays
+                                        .copyOfRange(inputRegisters, address, address + quantity));
+
+                                byte[] addMBAP =
+                                        SimpleMB.addMBAP(transactionId, inputBuffer[6], response);
+                                outputStream.write(addMBAP);
+                                outputStream.flush();
+                            }
+                            break;
                         case 6:
                             holdingRegisters[address] = quantity;
                             outputStream.write(receivedRequest);

@@ -13,22 +13,14 @@ public class ReduceTopicNode extends InputOutputNode {
     }
 
     public String makeTopic(JSONObject jsonObject) {
-        StringBuilder stringBuilder = new StringBuilder();
+        String site = jsonObject.getString("site");
+        String branch = jsonObject.getString("branch");
         String devEui = jsonObject.getString("deviceEui");
         String place = jsonObject.getString("place");
         String sensor = jsonObject.getString("sensor");
 
-        stringBuilder.append("data/d/");
-        stringBuilder.append(devEui);
-        stringBuilder.append("/p/");
-        stringBuilder.append(place);
-        stringBuilder.append("/e/");
-        stringBuilder.append(sensor);
-
-        return stringBuilder.toString();
+        return String.format("data/s/%s/b/%s/d/%s/p/%s/e/%s", site, branch, devEui, place, sensor);
     }
-
-    // data/d/24e124136d 151547/p/창고/e/temperature:msg.payload:
 
     @Override
     void preprocess() {
@@ -48,7 +40,7 @@ public class ReduceTopicNode extends InputOutputNode {
 
             jsonObject.put("prev", "Reduce");
             log.info("패킷전송");
-            output(new JsonMessage(new JSONObject(jsonObject.toString())));
+            output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
         }
     }
 

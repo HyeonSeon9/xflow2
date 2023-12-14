@@ -1,12 +1,14 @@
 package com.nhnacademy.aiot.node;
 
-import com.nhnacademy.aiot.exception.AlreadyExistsException;
+import java.util.ArrayList;
+import java.util.List;
 import com.nhnacademy.aiot.exception.InvalidArgumentException;
 import com.nhnacademy.aiot.exception.OutOfBoundsException;
 import com.nhnacademy.aiot.wire.Wire;
 
 public abstract class OutputNode extends ActiveNode {
-    Wire[] inputWires;
+    List<Wire> inputWires;
+    int count;
 
     OutputNode(String name) {
         this(name, 1);
@@ -14,11 +16,12 @@ public abstract class OutputNode extends ActiveNode {
 
     OutputNode(String name, int count) {
         super(name);
+        this.count = count;
         if (count <= 0) {
             throw new InvalidArgumentException();
         }
 
-        inputWires = new Wire[count];
+        inputWires = new ArrayList<>();
     }
 
     OutputNode(int count) {
@@ -27,29 +30,25 @@ public abstract class OutputNode extends ActiveNode {
             throw new InvalidArgumentException();
         }
 
-        inputWires = new Wire[count];
+        inputWires = new ArrayList<>();
     }
 
     public void connectInputWire(int index, Wire wire) {
-        if (inputWires.length <= index) {
+        if (count <= index) {
             throw new OutOfBoundsException();
         }
-
-        if (inputWires[index] != null) {
-            throw new AlreadyExistsException();
-        }
-        inputWires[index] = wire;
+        inputWires.add(wire);
     }
 
     public int getInputWireCount() {
-        return inputWires.length;
+        return inputWires.size();
     }
 
     public Wire getInputWire(int index) {
-        if (index < 0 || inputWires.length <= index) {
+        if (index < 0 || inputWires.size() <= index) {
             throw new OutOfBoundsException();
         }
 
-        return inputWires[index];
+        return inputWires.get(index);
     }
 }
