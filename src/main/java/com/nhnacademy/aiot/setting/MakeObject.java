@@ -12,10 +12,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import com.nhnacademy.aiot.modbus.client.Broker;
 import com.nhnacademy.aiot.modbus.client.Client;
+import com.nhnacademy.aiot.modbus.client.Redis;
 import com.nhnacademy.aiot.node.ActiveNode;
 import com.nhnacademy.aiot.node.ModbusReadNode;
 import com.nhnacademy.aiot.node.ModbusServerNode;
 import com.nhnacademy.aiot.node.ModbusWriteNode;
+import com.nhnacademy.aiot.node.RuleEngineNode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,6 +30,7 @@ public class MakeObject {
     private HashMap<String, Map<Integer, List<String>>> wireMap;
     private HashMap<String, Client> clientMap;
     private HashMap<String, Broker> brokerMap;
+    private HashMap<String, Redis> redisMap;
 
     public MakeObject() {
         this.nodeList = new HashMap<>();
@@ -35,6 +38,7 @@ public class MakeObject {
         this.wireput = new HashMap<>();
         this.clientMap = new HashMap<>();
         this.brokerMap = new HashMap<>();
+        this.redisMap = new HashMap<>();
     }
 
     public void makeNode(JSONObject node) {
@@ -105,6 +109,11 @@ public class MakeObject {
                 setHoldingRegisters.invoke(newObj, holdingBufferSize);
                 setInputRegisters.invoke(newObj, inputBufferSize);
                 setServerPort.invoke(newObj, serverPort);
+            } else if (newObj instanceof RuleEngineNode) {
+                Method setRedisName = newObj.getClass().getMethod("setRedisName", String.class);
+                String redisName = node.get("redis").toString();
+
+                setRedisName.invoke(newObj, redisName);
             }
 
             nodeList.put(nodeId, (ActiveNode) newObj);
@@ -113,6 +122,26 @@ public class MakeObject {
             log.error("error-", e);
         }
 
+    }
+
+    public void makeRedisServer(JSONObject object) {
+        try {
+            String redisType = (String) object.get("type");
+            String redisId = (String) object.get("id");
+            String redisName = (String) object.get("name");
+            String host = (String) object.get("host");
+            int port = Integer.parseInt(object.get("port").toString());
+            int database = Integer.parseInt(object.get("database").toString());
+            int timeout = Integer.parseInt(object.get("timeout").toString());
+            Class<?> clientClass = Class.forName(clientPath + redisType);
+            Constructor<?> clientConstructor = clientClass.getConstructor(String.class,
+                    String.class, int.class, int.class, int.class);
+            Object redis = clientConstructor.newInstance(redisName, host, port, database, timeout);
+            redisMap.put(redisId, (Redis) redis);
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     public void makeClient(JSONObject object) {
@@ -180,5 +209,9 @@ public class MakeObject {
 
     public Map<String, Broker> getBrokerMap() {
         return brokerMap;
+    }
+
+    public Map<String, Redis> getRedisMap() {
+        return redisMap;
     }
 }

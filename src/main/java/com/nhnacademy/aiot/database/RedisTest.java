@@ -6,7 +6,6 @@ import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisTest {
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
 
         String host = "127.0.0.1";
         int port = 6379;

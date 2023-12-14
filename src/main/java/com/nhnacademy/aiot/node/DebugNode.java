@@ -26,7 +26,8 @@ public class DebugNode extends OutputNode {
             while (getInputWire(i).hasMessage()) {
                 Message message = getInputWire(i).get();
                 if (message instanceof JsonMessage) {
-                    JSONObject jsonObject = new JSONObject(((JsonMessage) message).getPayload());
+                    JSONObject jsonObject =
+                            new JSONObject(((JsonMessage) message).getPayload().toString());
                     log.info("{}", jsonObject);
                 } else {
                     byte[] byteObject = ((ByteMessage) message).getPayload();
