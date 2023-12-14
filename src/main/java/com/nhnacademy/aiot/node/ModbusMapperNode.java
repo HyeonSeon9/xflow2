@@ -15,7 +15,7 @@ public class ModbusMapperNode extends InputOutputNode {
         super(name, 1, count);
     }
 
-    public void changeToByte(int unitId, int address, int value) {
+    public void changeToByte(int unitId, int address, int value, int register) {
         byte[] unitIdByte = SimpleMB.intToByte(unitId);
 
         byteArray[0] = unitIdByte[0];
@@ -30,6 +30,9 @@ public class ModbusMapperNode extends InputOutputNode {
 
         byteArray[4] = valueArray[0];
         byteArray[5] = valueArray[1];
+
+        // 0이면 holdingRegister 1이면 inputRegister
+        byteArray[6] = (byte) register;
 
         sendNext(byteArray);
     }
@@ -50,13 +53,16 @@ public class ModbusMapperNode extends InputOutputNode {
                 Message message = getInputWire(i).get();
                 JSONObject jsonObject = new JSONObject(((JsonMessage) message).getPayload().toString());
 
-                byteArray = new byte[6];
+                byteArray = new byte[7];
 
                 int unitId = jsonObject.getInt("unitid");
                 int address = jsonObject.getInt("address");
                 int value = jsonObject.getInt("value");
+                int register = jsonObject.getInt("register");
                 
-                changeToByte(unitId, address, value);
+                System.out.println("address : " + address + " value : " + value);
+
+                changeToByte(unitId, address, value, register);
             }
         }
     }

@@ -62,6 +62,7 @@ public class RuleEngineNode extends InputOutputNode {
                 int address = obj.getInt("address");
                 int value = 0;
                 
+                // float형태로 옴
                 Object valueObject = jsonObject.getJSONObject("payload").get("value");
                 
                 if (valueObject instanceof BigDecimal) {
@@ -74,7 +75,8 @@ public class RuleEngineNode extends InputOutputNode {
 
                 modObject.put("unitid", unitId);
                 modObject.put("address", address);
-                modObject.put("value", value);
+                modObject.put("value", value);  // 100이 곱해져 있는 상태
+                modObject.put("register", "1"); // input일 경우 input, 0일 경우 holding
 
                 output(1, new JsonMessage(modObject));
             }

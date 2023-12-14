@@ -33,7 +33,7 @@ public class ModbusServer implements Runnable {
                 HandlerServer handlerServer =
                         new HandlerServer(socket, holdingRegisters, inputRegisters);
                 handlerServer.start();
-
+                System.out.println("ModbusServer에서 소켓 받기 성공");
                 log.info("{} | PORT : {}", socket.getInetAddress().getHostAddress(),
                         socket.getPort());
             }

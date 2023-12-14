@@ -38,12 +38,12 @@ public class HandlerServer implements Runnable {
         try (BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
                 BufferedOutputStream outputStream =
                         new BufferedOutputStream(socket.getOutputStream());) {
-
+            System.out.println("Handler 들어오기 성공");
             byte[] inputBuffer = new byte[1024];
             int receivedLength = inputStream.read(inputBuffer, 0, inputBuffer.length);
             if (receivedLength > 0) {
                 byte[] receivedRequest = Arrays.copyOfRange(inputBuffer, 0, receivedLength);
-                // System.out.println(Arrays.toString(receivedRequest));
+                System.out.println("<<<<<<<<<<<<<<<<"+Arrays.toString(receivedRequest));
 
                 if ((receivedLength > DEFAULT_LENGTH_HAS_UNIT_ID) && (DEFAULT_LENGTH
                         + readTwoByte(inputBuffer[4], inputBuffer[5])) == receivedLength) {
@@ -69,13 +69,44 @@ public class HandlerServer implements Runnable {
                                 outputStream.flush();
                             }
                             break;
+                        
+                        case 4:
+                            if (address + quantity < holdingRegisters.length) {
+                                byte[] response = SimpleMB.makeReadInputRegisterResponse(address, quantity, inputRegisters);
+
+                                outputStream.write(SimpleMB.addMBAP(transactionId, inputBuffer[6], response));
+                                outputStream.flush();
+                            }
+                            break;
+                        
                         case 6:
                             holdingRegisters[address] = quantity;
+                            
                             outputStream.write(receivedRequest);
                             outputStream.flush();
+
+                            break;
+                        
+                        case 16:
+                            if (address + quantity < holdingRegisters.length) {
+                                int idx = address;
+
+                                for (int i = 0; i < quantity; i++) {
+                                    holdingRegisters[idx++] = readTwoByte(inputBuffer[13 + (i * 2)], inputBuffer[14 + (i * 2)]);
+                                }
+
+                                for (int i = address - 1; i < address + quantity + 1; i++) {
+                                    System.out.println(holdingRegisters[i]);
+                                }
+
+                                byte[] response = SimpleMB.makeWriteMultipleRegistersResponse(address, quantity);
+
+                                outputStream.write(SimpleMB.addMBAP(transactionId, inputBuffer[6],response));
+                            }
                             break;
 
                         default:
+                            
                             break;
                     }
 

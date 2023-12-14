@@ -22,6 +22,7 @@ import com.nhnacademy.aiot.modbus.client.Client;
 import com.nhnacademy.aiot.node.ActiveNode;
 import com.nhnacademy.aiot.node.ModbusReadNode;
 import com.nhnacademy.aiot.node.ModbusServerNode;
+import com.nhnacademy.aiot.node.ModbusSlaveServerNode;
 import com.nhnacademy.aiot.node.ModbusWriteNode;
 import com.nhnacademy.aiot.node.MqttInNode;
 import com.nhnacademy.aiot.node.MqttOutNode;
@@ -144,6 +145,8 @@ public class BeforeSetting {
                         "storage", "창고", "meeting_room", "미팅룸", "pair_room", "페어룸", "냉장고", "냉장고")));
             } else if (node instanceof ModbusServerNode) {
                 ((ModbusServerNode) node).launchServer();
+            } else if (node instanceof ModbusSlaveServerNode) {
+                ((ModbusSlaveServerNode) node).launchServer();
             } else if (node instanceof ModbusReadNode || node instanceof ModbusWriteNode) {
                 try {
                     Method setServer = node.getClass().getMethod("setServer", Client.class);
