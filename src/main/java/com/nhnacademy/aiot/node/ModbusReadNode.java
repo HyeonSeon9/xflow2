@@ -1,6 +1,5 @@
 package com.nhnacademy.aiot.node;
 
-import java.util.Arrays;
 import com.nhnacademy.aiot.message.ByteMessage;
 import com.nhnacademy.aiot.modbus.client.Client;
 import com.nhnacademy.aiot.modbus.server.SimpleMB;
@@ -71,8 +70,9 @@ public class ModbusReadNode extends InputNode {
 
         System.arraycopy(response, 0, newResponse, 2, response.length);
 
-        log.info("---------------------------{}", Arrays.toString(newResponse));
-        log.info("---------------------------{}", SimpleMB.readTwoByte(response[9], response[10]));
+        // log.info("---------------------------{}", Arrays.toString(newResponse));
+        // log.info("---------------------------{}", SimpleMB.readTwoByte(response[9],
+        // response[10]));
         output(0, new ByteMessage(newResponse));
 
     }
