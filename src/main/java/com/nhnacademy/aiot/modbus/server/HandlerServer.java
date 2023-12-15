@@ -80,8 +80,9 @@ public class HandlerServer implements Runnable {
                             break;
                         
                         case 6:
-                            holdingRegisters[address] = quantity;
-                            
+                            holdingRegisters[address] = quantity;   // function 6에서 quantity의 위치가 value임
+                            System.out.println("펑션 6 확인 (888) 나와야함 >> " + holdingRegisters[address]);
+                            System.out.println(Arrays.toString(receivedRequest));
                             outputStream.write(receivedRequest);
                             outputStream.flush();
 

@@ -15,10 +15,9 @@ import org.json.simple.parser.ParseException;
 public class test {
     public static void main(String[] args) throws IOException {
 
-        // ServerSocket serverSocket = new ServerSocket(11502);
-        // Socket socket;
-        // serverSocket.accept();
-        // System.out.println("ㅕㄴ결성공");
-
+        byte a = (byte)888;
+        byte[] b = SimpleMB.intToByte(888); 
+        System.out.println(b[0]);
+        System.out.println(b[1]);
     }
 }

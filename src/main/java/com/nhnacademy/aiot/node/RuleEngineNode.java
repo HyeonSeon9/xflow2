@@ -40,6 +40,9 @@ public class RuleEngineNode extends InputOutputNode {
         for (int i = 0; i < getInputWireCount(); i++) {
             while (getInputWire(i).hasMessage()) {
                 Message message = getInputWire(0).get();
+                if(message instanceof JsonMessage){
+                    
+                }
                 JSONObject jsonObject =
                         new JSONObject(((JsonMessage) message).getPayload().toString());
 
