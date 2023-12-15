@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
+import org.json.JSONObject;
 import com.nhnacademy.aiot.message.ByteMessage;
+import com.nhnacademy.aiot.message.JsonMessage;
 import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.modbus.server.ModbusServer;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class ModbusServerNode extends InputOutputNode {
 
     public void setHoldingRegisters(int holdingBufferSize) {
         this.holdingRegisters = new int[holdingBufferSize];
+
     }
 
     public void setInputRegisters(int inputBufferSize) {
@@ -50,12 +53,23 @@ public class ModbusServerNode extends InputOutputNode {
 
     @Override
     void process() {
-        if (((getInputWire(0) != null) && (getInputWire(0).hasMessage()))) {
-            Message message = getInputWire(0).get();
-            byte[] data = ((ByteMessage) message).getPayload();
-            log.info("{}", Arrays.toString(data));
-            // JSONObject jsonObject = new JSONObject(((JsonMessage)
-            // message).getPayload().toString());
+        for (int i = 0; i < getInputWireCount(); i++) {
+            while (getInputWire(i).hasMessage()) {
+                Message message = getInputWire(i).get();
+                if (message instanceof JsonMessage) {
+                    JSONObject jsonObject =
+                            new JSONObject(((JsonMessage) message).getPayload().toString());
+                    float value = jsonObject.getFloat("value");
+                    int address = jsonObject.getInt("address");
+                    if (jsonObject.getString("register").equals("input")) {
+                        inputRegisters[address] = (int) (value * 100);
+                    }
+                } else {
+                    byte[] data = ((ByteMessage) message).getPayload();
+                    log.info("{}", Arrays.toString(data));
+
+                }
+            }
         }
     }
 }

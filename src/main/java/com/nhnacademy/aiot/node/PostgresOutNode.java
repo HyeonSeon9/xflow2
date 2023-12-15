@@ -54,8 +54,13 @@ public class PostgresOutNode extends OutputNode {
                 String search = String.format(
                         "SELECT * FROM sensorinfo WHERE type = '%s' AND deviceeui = '%s';", type,
                         deviceEui);
+                if (place.equals("냉장고")) {
+                    // INSERT INTO sensorinfo (id, type, deviceeui, site, branch, place, unitid,
+                    // address,virtualId,virtualAddress) VALUES (default, 'temperature',
+                    // '24e124126c457594', 'nhnacademy', 'gyeongnam', '냉장고', 1, 111,2,112);
 
-                System.out.println("here");
+                    continue;
+                }
                 try {
                     this.rs = stmt.executeQuery(search);
                     if (!rs.next()) {
@@ -87,7 +92,7 @@ public class PostgresOutNode extends OutputNode {
                             System.out.println("Generated SQL: " + generatedSql);
                             pstmt.executeUpdate();
                         } catch (SQLException e) {
-                            e.printStackTrace(); // 또는 원하는 방식으로 예외 처리
+                            e.printStackTrace();
                         }
                     }
                 } catch (SQLException e) {

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class PostgresTest {
+public class PostgresCreateTable {
     public static void main(String[] args) throws SQLException {
         String url = "jdbc:postgresql://localhost:5432/xflow";
         String user = "postgres";

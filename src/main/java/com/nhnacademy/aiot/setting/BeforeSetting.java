@@ -19,6 +19,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import com.nhnacademy.aiot.modbus.client.Broker;
 import com.nhnacademy.aiot.modbus.client.Client;
+import com.nhnacademy.aiot.modbus.client.Redis;
 import com.nhnacademy.aiot.node.ActiveNode;
 import com.nhnacademy.aiot.node.ModbusReadNode;
 import com.nhnacademy.aiot.node.ModbusServerNode;
@@ -27,6 +28,7 @@ import com.nhnacademy.aiot.node.ModbusWriteNode;
 import com.nhnacademy.aiot.node.MqttInNode;
 import com.nhnacademy.aiot.node.MqttOutNode;
 import com.nhnacademy.aiot.node.PlaceTranslatorNode;
+import com.nhnacademy.aiot.node.RuleEngineNode;
 import com.nhnacademy.aiot.node.SplitNode;
 import com.nhnacademy.aiot.wire.BufferedWire;
 import com.nhnacademy.aiot.wire.Wire;
@@ -40,11 +42,13 @@ public class BeforeSetting {
     // "src/main/java/com/nhnacademy/aiot/setting/modbusSetting.json";
 
     // protected static String settingPath = "src/main/java/com/nhnacademy/aiot/setting/test.json";
-
+    // protected static String settingPath =
+    // "src/main/java/com/nhnacademy/aiot/setting/postgresCrete.json";
     private Map<String, ActiveNode> nodeList;
     private Map<String, Map<Integer, List<String>>> wireMap;
     private Map<String, Client> clientMap;
     private Map<String, Broker> brokerMap;
+    private Map<String, Redis> redisMap;
 
     protected static String path = "com.nhnacademy.aiot.node.";
     protected static String clientPath = "com.nhnacademy.aiot.modbus.client.";
@@ -87,6 +91,7 @@ public class BeforeSetting {
         this.wireMap = makeObject.getWireMap();
         this.clientMap = makeObject.getClientMap();
         this.brokerMap = makeObject.getBrokerMap();
+        this.redisMap = makeObject.getRedisMap();
     }
 
 
@@ -100,6 +105,8 @@ public class BeforeSetting {
                 makeObject.makeClient((JSONObject) object);
             } else if (objectType.equals("Broker")) {
                 makeObject.makeBroker((JSONObject) object);
+            } else if (objectType.equals("Redis")) {
+                makeObject.makeRedisServer((JSONObject) object);
             }
         }
         loadObjectList();
@@ -166,6 +173,16 @@ public class BeforeSetting {
                     String brokerName = (String) getBrokerName.invoke(node);
 
                     setBroker.invoke(node, brokerMap.get(brokerName));
+                } catch (NoSuchMethodException | IllegalAccessException
+                        | InvocationTargetException e) {
+                    System.err.println(e.getMessage());
+                }
+            } else if (node instanceof RuleEngineNode) {
+                try {
+                    Method getRedisName = node.getClass().getMethod("getRedisName");
+                    Method setRedis = node.getClass().getMethod("setRedis", Redis.class);
+                    String redisName = (String) getRedisName.invoke(node);
+                    setRedis.invoke(node, redisMap.get(redisName));
                 } catch (NoSuchMethodException | IllegalAccessException
                         | InvocationTargetException e) {
                     System.err.println(e.getMessage());

@@ -14,16 +14,18 @@
     {
       "id": "placeTrans",
       "type": "PlaceTranslatorNode",
-      "wire": [["RuleEngine"]]
+      "wire": [["PostgresOut"]]
+    },
+    {
+      "id": "PostgresOut",
+      "type": "PostgresOutNode",
+      "wire": []
     },
     {
       "id": "RuleEngine",
       "type": "RuleEngineNode",
       "redis": "redis",
-      "wire": [
-        ["reduceTopic", "debug1"],
-        ["debug2", "modbusServer"]
-      ]
+      "wire": [["reduceTopic"]]
     },
     {
       "id": "reduceTopic",
@@ -35,25 +37,6 @@
       "type": "MqttOutNode",
       "broker": "c94037b4662b2b1d",
       "wire": []
-    },
-    {
-      "id": "debug1",
-      "type": "DebugNode",
-      "wire": []
-    },
-    {
-      "id": "debug2",
-      "type": "DebugNode",
-      "wire": []
-    },
-    {
-      "id": "modbusServer",
-      "type": "ModbusServerNode",
-      "hostname": "0.0.0.0",
-      "serverPort": "11502",
-      "holdingBufferSize": 10000,
-      "inputBufferSize": 10000,
-      "wire": [[], [], [], [], []]
     },
     {
       "id": "777155e1e7687505",
@@ -83,39 +66,6 @@
       "port": "6379",
       "database": 0,
       "timeout": 3000
-    },
-    {
-      "id": "modbusRead",
-      "type": "ModbusReadNode",
-      "unitid": "",
-      "dataType": "HoldingRegister",
-      "adr": "104",
-      "quantity": "1",
-      "server": "modbusClient",
-      "wire": [["RuleEngine"], []]
-    },
-    {
-      "id": "classAB",
-      "type": "ModbusServerNode",
-      "hostname": "0.0.0.0",
-      "serverPort": "11503",
-      "holdingBufferSize": 10000,
-      "inputBufferSize": 10000,
-      "wire": [[], [], [], [], []]
-    },
-    {
-      "id": "modbusClient",
-      "type": "Client",
-      "clienttype": "tcp",
-      "name": "localhost",
-      "tcpHost": "0.0.0.0",
-      "tcpPort": "11503",
-      "unit_id": "1"
-    },
-    {
-      "id": "inject",
-      "type": "InjectNode",
-      "wire": [["classAB"]]
     }
   ],
   [
