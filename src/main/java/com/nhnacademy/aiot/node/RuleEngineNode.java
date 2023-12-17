@@ -19,6 +19,7 @@ public class RuleEngineNode extends InputOutputNode {
     List<JSONObject> jsonArray;
     Redis redis;
     String redisName;
+    static int messageCount = 0;
 
     public RuleEngineNode(String name, int count) {
         super(name, 1, count);
@@ -38,6 +39,10 @@ public class RuleEngineNode extends InputOutputNode {
 
     public void setRedis(Redis redis) {
         this.redis = redis;
+    }
+
+    public static int getMessageCount() {
+        return messageCount;
     }
 
     public JSONObject makeModbusInsert(JSONObject jsonObject, int address) {
@@ -89,14 +94,14 @@ public class RuleEngineNode extends InputOutputNode {
     public void modBusToModbusAndMqtt(byte[] byteObject) {
         int virtualId = byteObject[8];
         int virtualAddress = SimpleMB.readTwoByte(byteObject[0], byteObject[1]);
-        double value = (SimpleMB.readTwoByte(byteObject[byteObject.length - 2],
-                byteObject[byteObject.length - 1])) * 0.01;
+        float value = (float) ((SimpleMB.readTwoByte(byteObject[byteObject.length - 2],
+                byteObject[byteObject.length - 1])) * 0.01);
 
         JSONObject jsonObject = jsonArray.stream()
                 .filter(x -> x.getInt("virtualaddress") == (virtualAddress)
                         && x.getInt("virtualid") == virtualId)
                 .map(JSONObject.class::cast).findFirst().orElse(null);
-
+        redisInsert(jsonObject, value);
         int address = jsonObject.getInt("address");
 
         JSONObject modbusRequest = new JSONObject();
@@ -124,6 +129,7 @@ public class RuleEngineNode extends InputOutputNode {
         for (int i = 0; i < getInputWireCount(); i++) {
             while (getInputWire(i).hasMessage()) {
                 Message message = getInputWire(i).get();
+                messageCount++;
                 if (message instanceof JsonMessage) {
                     JSONObject jsonObject =
                             new JSONObject(((JsonMessage) message).getPayload().toString());
@@ -133,7 +139,6 @@ public class RuleEngineNode extends InputOutputNode {
                     byte[] byteObject = Arrays.copyOf(((ByteMessage) message).getPayload(),
                             ((ByteMessage) message).getPayload().length);
                     modBusToModbusAndMqtt(byteObject);
-
                 }
             }
         }

@@ -57,6 +57,7 @@ public class ModbusReadNode extends InputNode {
 
     @Override
     void process() {
+
         byte[] pdu = SimpleMB.makeReadInputRegistersRequest(address, quantity);
         byte[] request = SimpleMB.addMBAP(count++, server.getUnitId(), pdu);
         byte[] response = server.sendAndReceive(request);

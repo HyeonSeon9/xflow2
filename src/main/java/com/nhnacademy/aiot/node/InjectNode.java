@@ -33,8 +33,7 @@ public class InjectNode extends InputNode {
     @Override
     void process() {
         JSONObject modbusRequest = new JSONObject();
-        // int address = random.nextInt(endAddress) + 100;
-        int address = 104;
+        int address = random.nextInt(endAddress) + 100;
         double value = startValue + Math.random() * endValue;
         modbusRequest.put("value", value);
         modbusRequest.put("address", address);
