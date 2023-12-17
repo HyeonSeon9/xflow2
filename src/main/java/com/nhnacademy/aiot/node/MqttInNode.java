@@ -14,6 +14,7 @@ public class MqttInNode extends InputNode {
 
     public MqttInNode(String name, int count) {
         super(name, count);
+        setInterval(10000000);
     }
 
     public void setBroker(Broker broker) {

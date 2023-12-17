@@ -83,6 +83,39 @@
       "port": "6379",
       "database": 0,
       "timeout": 3000
+    },
+    {
+      "id": "modbusRead",
+      "type": "ModbusReadNode",
+      "unitid": "",
+      "dataType": "HoldingRegister",
+      "adr": "104",
+      "quantity": "1",
+      "server": "modbusClient",
+      "wire": [["RuleEngine"], []]
+    },
+    {
+      "id": "classAB",
+      "type": "ModbusServerNode",
+      "hostname": "0.0.0.0",
+      "serverPort": "11503",
+      "holdingBufferSize": 10000,
+      "inputBufferSize": 10000,
+      "wire": [[], [], [], [], []]
+    },
+    {
+      "id": "modbusClient",
+      "type": "Client",
+      "clienttype": "tcp",
+      "name": "localhost",
+      "tcpHost": "0.0.0.0",
+      "tcpPort": "11503",
+      "unit_id": "1"
+    },
+    {
+      "id": "inject",
+      "type": "InjectNode",
+      "wire": [["classAB"]]
     }
   ],
   [
