@@ -10,7 +10,6 @@ public class HandlerServer implements Runnable {
     private final Socket socket;
     private final Thread thread;
 
-
     private static final int DEFAULT_LENGTH_HAS_UNIT_ID = 7;
     private static final int DEFAULT_LENGTH = 6;
 
@@ -62,6 +61,20 @@ public class HandlerServer implements Runnable {
                                 byte[] response = SimpleMB.makeReadHoldingRegistersResponse(
                                         Arrays.copyOfRange(holdingRegisters, address,
                                                 address + quantity));
+
+                                byte[] addMBAP =
+                                        SimpleMB.addMBAP(transactionId, inputBuffer[6], response);
+                                outputStream.write(addMBAP);
+                                outputStream.flush();
+                            }
+                            break;
+                        case 4:
+                            if (address + quantity < inputRegisters.length) {
+                                System.out.println(
+                                        "Address : " + address + ", Quantity: " + quantity);
+
+                                byte[] response = SimpleMB.makeReadInputRegistersResponse(Arrays
+                                        .copyOfRange(inputRegisters, address, address + quantity));
 
                                 byte[] addMBAP =
                                         SimpleMB.addMBAP(transactionId, inputBuffer[6], response);

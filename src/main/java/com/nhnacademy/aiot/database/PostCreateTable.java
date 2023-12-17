@@ -1,4 +1,4 @@
-package com.nhnacademy.aiot.databases;
+package com.nhnacademy.aiot.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class PostgresTest {
+public class PostCreateTable {
     public static void main(String[] args) throws SQLException {
         String url = "jdbc:postgresql://localhost:5432/xflow";
         String user = "postgres";

@@ -61,7 +61,7 @@ public class SplitNode extends InputOutputNode {
 
     public void sendNode(JSONObject jsonObject) {
         log.info("패킷전송");
-        output(new JsonMessage(new JSONObject(jsonObject.toString())));
+        output(0, new JsonMessage(new JSONObject(jsonObject.toString())));
     }
 
     @Override

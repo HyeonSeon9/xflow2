@@ -6,6 +6,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "PostCreateTable",
+      "request": "launch",
+      "mainClass": "com.nhnacademy.aiot.database.PostCreateTable",
+      "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+      "type": "java",
+      "name": "PostgresPacketTable",
+      "request": "launch",
+      "mainClass": "com.nhnacademy.aiot.database.PostgresPacketTable",
+      "projectName": "mini-project-aiot-gateway1"
+    },
+    {
+      "type": "java",
       "name": "PostgresTest",
       "request": "launch",
       "mainClass": "com.nhnacademy.aiot.databases.PostgresTest",

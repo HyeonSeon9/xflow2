@@ -1,5 +1,7 @@
 package com.nhnacademy.aiot.node;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.nhnacademy.aiot.exception.AlreadyExistsException;
 import com.nhnacademy.aiot.exception.InvalidArgumentException;
 import com.nhnacademy.aiot.exception.OutOfBoundsException;
@@ -9,7 +11,7 @@ import com.nhnacademy.aiot.message.Message;
 import com.nhnacademy.aiot.wire.Wire;
 
 public abstract class InputNode extends ActiveNode {
-    Wire[] outputWires;
+    List<List<Wire>> outputWires;
 
     InputNode(String name) {
         this(name, 1);
@@ -22,7 +24,10 @@ public abstract class InputNode extends ActiveNode {
             throw new InvalidArgumentException();
         }
 
-        outputWires = new Wire[count];
+        outputWires = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            outputWires.add(new ArrayList<>());
+        }
     }
 
     InputNode(int count) {
@@ -32,44 +37,45 @@ public abstract class InputNode extends ActiveNode {
             throw new InvalidArgumentException();
         }
 
-        outputWires = new Wire[count];
+        outputWires = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            outputWires.add(new ArrayList<>());
+        }
+
     }
 
-    public void connectOutputWire(int index, Wire wire) {
-        if (outputWires.length <= index) {
+    public void connectOutputWire(int port, Wire wire) {
+        if (outputWires.size() <= port) {
             throw new OutOfBoundsException();
         }
 
-        if (outputWires[index] != null) {
-            throw new AlreadyExistsException();
-        }
-
-        outputWires[index] = wire;
+        outputWires.get(port).add(wire);
     }
 
     public int getOutputWireCount() {
-        return outputWires.length;
+        return outputWires.size();
     }
 
-    public Wire getoutputWire(int index) {
-        if (index < 0 || outputWires.length <= index) {
+    public Wire getoutputWire(int port, int index) {
+        if (port < 0 || outputWires.size() <= port || outputWires.get(port).size() <= index) {
             throw new OutOfBoundsException();
         }
 
-        return outputWires[index];
+        return outputWires.get(port).get(index);
     }
 
-    void output(Message message) {
+    void output(int port, Message message) {
         log.trace("Message Out");
-        for (Wire port : outputWires) {
+        for (int i = 0; i < outputWires.get(port).size(); i++) {
             Message putMessage = null;
+            Wire wire = outputWires.get(port).get(i);
             if (message instanceof JsonMessage) {
-                putMessage = new JsonMessage(((JsonMessage) message).getPayload());
+                putMessage = new JsonMessage(((JsonMessage)message).getPayload());
             } else {
-                putMessage = new ByteMessage(((ByteMessage) message).getPayload());
+                putMessage = new ByteMessage(((ByteMessage)message).getPayload());
             }
-            if (port != null) {
-                port.put(putMessage);
+            if (wire != null) {
+                wire.put(putMessage);
             }
         }
     }

@@ -19,7 +19,7 @@ public class ModbusReadNode extends InputNode {
 
     public ModbusReadNode(String name, int port) {
         super(name, port);
-        setInterval(10000000);
+        setInterval(6000);
     }
 
     public void setDataType(String dataType) {
@@ -58,8 +58,16 @@ public class ModbusReadNode extends InputNode {
         byte[] request = SimpleMB.addMBAP(count++, server.getUnitId(), pdu);
         byte[] response = server.sendAndReceive(request);
 
-        output(new ByteMessage(response));
+        byte[] newResponse = new byte[response.length + 2];
 
+        byte[] addressByte = SimpleMB.intToByte(address);
+
+        newResponse[0] = addressByte[0];
+        newResponse[1] = addressByte[1];
+
+        System.arraycopy(response, 0, newResponse, 2, response.length);
+
+        output(0, new ByteMessage(newResponse));
     }
 
 }

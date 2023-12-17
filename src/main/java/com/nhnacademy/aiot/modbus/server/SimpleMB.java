@@ -27,6 +27,24 @@ public class SimpleMB {
         return frame;
     }
 
+    public static byte[] makeReadInputRegistersRequest(int address, int quantity) {
+        byte[] frame = new byte[5];
+
+        // PDU의 function code
+        frame[0] = 0x04;
+
+        // PDU의 data
+        byte[] addressByte = intToByte(address);
+        frame[1] = addressByte[0];
+        frame[2] = addressByte[1];
+
+        byte[] quantityByte = intToByte(quantity);
+        frame[3] = quantityByte[0];
+        frame[4] = quantityByte[1];
+
+        return frame;
+    }
+
     public static byte[] makeWriteHoldingRegistersRequest(int address, int value) {
         byte[] frame = new byte[5];
 
@@ -61,6 +79,24 @@ public class SimpleMB {
         }
         return frame;
     }
+
+    public static byte[] makeReadInputRegistersResponse(int[] registers) {
+        byte[] frame = new byte[1 + 1 + registers.length * 2];
+
+        // PDU의 Function Code
+        frame[0] = 0x04;
+
+        // Length
+        frame[1] = (byte) (registers.length * 2);
+
+        for (int i = 0; i < registers.length; i++) {
+            byte[] inputByte = intToByte(registers[i]);
+            frame[2 + i * 2] = inputByte[0];
+            frame[2 + i * 2 + 1] = inputByte[1];
+        }
+        return frame;
+    }
+
 
     public static byte[] addMBAP(int transactionId, int unitId, byte[] pdu) {
         byte[] adu = new byte[7 + pdu.length];
